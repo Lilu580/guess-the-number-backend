@@ -15,34 +15,57 @@ app.use(express.json());
  
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const webAppUrl = WEB_APP_URL;
 
-  bot.sendMessage(chatId, 'Ласкаво просимо до гри "Вгадай число"! Відкрийте гру в WebView:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: 'Почати гру', web_app: { url: webAppUrl } }]
-      ]
-    }
-  });
+  try {
+    await bot.sendMessage(chatId, 'Ласкаво просимо до гри "Вгадай число"! Відкрийте гру в WebView:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: 'Почати гру', web_app: { url: webAppUrl } }]
+        ]
+      }
+    });
+  } catch (error) {
+    console.error('Error sending message:', error);
+  }
 });
 
 let secretNumber = 0;
 
 app.post('/start_game', (req, res) => {
-  secretNumber = Math.floor(Math.random() * 100) + 1;
-  res.send({ message: 'Гру почато!' });
+  try {
+    secretNumber = Math.floor(Math.random() * 100) + 1;
+    res.status(200).send({ message: 'Гру почато!' });
+  } catch (error) {
+    console.error('Error starting game:', error);
+    res.status(500).send({ message: 'Сталася помилка при запуску гри' });
+  }
 });
 
 app.post('/guess', (req, res) => {
-  const { number } = req.body;
-  if (number == secretNumber) {
-    res.send({ message: 'Число вгадано' });
-  } else if (number < secretNumber) {
-    res.send({ message: 'Загадане число більше' });
-  } else {
-    res.send({ message: 'Загадане число меньше' });
+  try {
+    const { number } = req.body;
+
+    if(!number || typeof number !== 'number') {
+      return res.status(500).send({message: 'Щось пішло не так'})
+    }
+
+    if (number == secretNumber) {
+      returnres.status(200).send({ message: 'Число вгадано' });
+    } 
+    
+    if (number < secretNumber) {
+      return res.status(200).send({ message: 'Загадане число більше' });
+    } 
+
+    if (number < secretNumber) {
+      return res.status(200).send({ message: 'Загадане число меньше' });
+    }
+  } catch {
+    console.error('Error processing guess:', error);
+    res.status(500).send({ message: 'Сталася помилка при обробці запиту' });
   }
 });
 
