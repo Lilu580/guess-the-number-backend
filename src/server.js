@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
  
-const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(`${TELEGRAM_BOT_TOKEN}`, { polling: true });
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
