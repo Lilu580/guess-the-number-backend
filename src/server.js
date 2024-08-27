@@ -48,7 +48,7 @@ app.post('/guess', (req, res) => {
   try {
     const { number } = req.body;
 
-    if(!number || typeof number !== 'number') {
+    if(!number) {
       return res.status(500).send({message: 'Щось пішло не так'})
     }
 
@@ -60,7 +60,7 @@ app.post('/guess', (req, res) => {
       return res.status(200).send({ message: 'Загадане число більше' });
     } 
 
-    if (number < secretNumber) {
+    if (number > secretNumber) {
       return res.status(200).send({ message: 'Загадане число меньше' });
     }
   } catch {
