@@ -53,7 +53,7 @@ app.post('/guess', (req, res) => {
     }
 
     if (number == secretNumber) {
-      returnres.status(200).send({ message: 'Число вгадано' });
+      return res.status(200).send({ message: 'Число вгадано' });
     } 
     
     if (number < secretNumber) {
